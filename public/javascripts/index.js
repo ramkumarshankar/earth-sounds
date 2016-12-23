@@ -11,6 +11,17 @@ var startTime;
 var timeScaleFactor = 5;
 var useDummy = false;
 
+//Envelope
+var env;
+var attackLevel = 1.0;
+var releaseLevel = 0;
+var attackTime = 0.001
+var decayTime = 0.2;
+var susPercent = 0.2;
+var releaseTime = 0.5;
+
+var notes = [60, 64, 67, 72];
+
 class Earthquake {
     constructor(id, title, mag, long, lat, depth, time) {
         //Get our values
@@ -24,30 +35,25 @@ class Earthquake {
 
         this._radius = 5;
 
-        //Initialise the oscillator for this event
-        var freq = map(this._mag, 0, 6, 30, 700);
-        this._osc = new p5.Oscillator(freq, 'sine');
-        this._osc.amp(0);
-        this._osc.start();
-
         //Set some flags
-        this._isPlaying = false;
+        this._hasPlayed = false;
         this._isDrawing = false;
         this._hasDrawn = false;
     }
 
-    playTone() {
-        this._isPlaying = true;
-    }
-
-    stopTone() {
-        this._isPlaying = false;
+    setupTone() {
+        this._osc = new p5.Oscillator();
+        this._osc.amp(0);
+        // var freqTone = map(this._depth, minDepth, maxDepth, 30, 500);
+        var freqTone = midiToFreq(notes[0]);
+        this._osc.setType('sine');
+        this._osc.freq(freqTone);
+        this._osc.start();
     }
 
     startDraw() {
         if (!this.hasDrawn) {
             this._isDrawing = true;
-            this.playTone();
         }
     }
 
@@ -59,15 +65,13 @@ class Earthquake {
                     this._radius = 5;
                     this._isDrawing = false;
                     this._hasDrawn = true;
-                    this.stopTone();
                 }
 
-                if (this._isPlaying) {
-                    this._osc.amp(0.5, 0.05);
+                if (!this._hasPlayed) {
+                    env.play(this._osc);
+                    this._hasPlayed = true;
                 }
-                else {
-                    this._osc.amp(0, 0.5);
-                }
+
                 var x = map(this._long, -180, 180, 0, width);
                 var y = height - map(this._lat, -90, 90, 0, height);
                 noStroke();
