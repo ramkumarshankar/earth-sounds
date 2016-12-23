@@ -8,7 +8,8 @@ var ellipseColor2;
 var textColor;
 
 var startTime;
-var timeScaleFactor = 5;
+var maxDepth = 0;
+var minDepth = 0;
 var useDummy = false;
 
 //Envelope
@@ -100,7 +101,7 @@ function preload() {
         //mockup some test data
         let quakeEvent = new Earthquake(0, '10km N of Atlantis', 2.3, 150, 30, 4, 0);
         earthquakes.push(quakeEvent);
-        quakeEvent = new Earthquake(0, '20km SSW of Morder', 4.9, 10, -60, 4, 5);
+        quakeEvent = new Earthquake(0, '20km SSW of Mordor', 4.9, 10, -60, 4, 5);
         earthquakes.push(quakeEvent);
         quakeEvent = new Earthquake(0, '28km SE of Atlantis', 0.5, -87, 11, 4, 10);
         earthquakes.push(quakeEvent);
@@ -108,9 +109,9 @@ function preload() {
     else {
         //load data feed, uncomment line
         //Daily
-        // var url = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson";
-        //Hourly
-        var url = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson";
+        var url = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson";
+        // Hourly
+        // var url = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson";
         loadJSON(url, loadData);
     }
 
@@ -130,6 +131,16 @@ function loadData(results) {
             firstEventTime.diff(moment(results.features[i].properties.time), 'seconds') / 100
         );
         earthquakes.push(quakeEvent);
+        if (results.features[i].geometry.coordinates[2] > maxDepth) {
+            maxDepth = results.features[i].geometry.coordinates[2];
+        }
+        if (results.features[i].geometry.coordinates[2] < minDepth) {
+            minDepth = results.features[i].geometry.coordinates[2];
+        }
+    }
+    for (var i = 0; i <  earthquakes.length; i++) {
+        earthquakes[i].setupTone();
+        console.log(earthquakes[i]._time);
     }
 
 }
@@ -139,7 +150,12 @@ function setup() {
     backgroundColor =  color(97, 74, 226);
     ellipseColor1 = color('rgba(11, 34, 62, 1)');
     ellipseColor2 = color('rgba(255, 255, 255, 0.1)');
+    textColor = color('rgba(255, 255, 255, 1)');
     background(backgroundColor);
+
+    env = new p5.Env();
+    env.setADSR(attackTime, decayTime, susPercent, releaseTime);
+    env.setRange(attackLevel, releaseLevel);
 
     startTime = millis();
 }
