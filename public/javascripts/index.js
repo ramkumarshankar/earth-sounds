@@ -68,7 +68,7 @@ class Earthquake {
                     this._osc.amp(0, 0.5);
                 }
                 var x = map(this._long, -180, 180, 0, width);
-                var y = map(this._lat, -90, 90, 0, height);
+                var y = height - map(this._lat, -90, 90, 0, height);
                 noStroke();
 
                 fill(ellipseColor2);
