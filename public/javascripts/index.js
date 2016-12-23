@@ -1,10 +1,11 @@
 var earthquakes = [];
-var textFont;
+var regularFont;
 
 var backgroundColor;
 
 var ellipseColor1;
 var ellipseColor2;
+var textColor;
 
 var startTime;
 var timeScaleFactor = 5;
@@ -77,13 +78,19 @@ class Earthquake {
 
                 fill(ellipseColor1);
                 ellipse(x, y, 15, 15);
+
+                fill(textColor);
+                textSize(16);
+                textAlign(CENTER);
+                textFont(regularFont);
+                text(this._title, x, y + 30);
             }
         }
     }
 }
 
 function preload() {
-    textFont = loadFont('./assets/Chivo-Light.otf');
+    regularFont = loadFont('./assets/Chivo-Light.otf');
 
     if (useDummy) {
         //mockup some test data
