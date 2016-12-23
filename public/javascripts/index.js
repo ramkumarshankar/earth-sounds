@@ -20,6 +20,7 @@ var attackTime = 0.001
 var decayTime = 0.2;
 var susPercent = 0.2;
 var releaseTime = 0.5;
+var osc;
 
 var notes = [60, 64, 67, 72];
 
@@ -43,13 +44,8 @@ class Earthquake {
     }
 
     setupTone() {
-        this._osc = new p5.Oscillator();
-        this._osc.amp(0);
-        // var freqTone = map(this._depth, minDepth, maxDepth, 30, 500);
-        var freqTone = midiToFreq(notes[0]);
-        this._osc.setType('sine');
-        this._osc.freq(freqTone);
-        this._osc.start();
+        //TODO: do something with frequency?
+        this._freq = midiToFreq(notes[Math.floor(random(4))]);
     }
 
     startDraw() {
@@ -66,10 +62,13 @@ class Earthquake {
                     this._radius = 5;
                     this._isDrawing = false;
                     this._hasDrawn = true;
+                    env.triggerRelease(osc);
                 }
 
                 if (!this._hasPlayed) {
-                    env.play(this._osc);
+                    osc.freq(this._freq);
+                    // env.play(osc, 0, 0.1);
+                    env.triggerAttack(osc);
                     this._hasPlayed = true;
                 }
 
@@ -127,8 +126,8 @@ function loadData(results) {
             results.features[i].geometry.coordinates[0],
             results.features[i].geometry.coordinates[1],
             results.features[i].geometry.coordinates[2],
-            // moment(results.features[i].properties.time).diff(firstEventTime, 'seconds')
-            firstEventTime.diff(moment(results.features[i].properties.time), 'seconds') / 100
+            //Todo: decide how to sequence the events
+            firstEventTime.diff(moment(results.features[i].properties.time), 'seconds') / 1000
         );
         earthquakes.push(quakeEvent);
         if (results.features[i].geometry.coordinates[2] > maxDepth) {
@@ -140,7 +139,6 @@ function loadData(results) {
     }
     for (var i = 0; i <  earthquakes.length; i++) {
         earthquakes[i].setupTone();
-        console.log(earthquakes[i]._time);
     }
 
 }
@@ -156,6 +154,9 @@ function setup() {
     env = new p5.Env();
     env.setADSR(attackTime, decayTime, susPercent, releaseTime);
     env.setRange(attackLevel, releaseLevel);
+
+    osc = new p5.Oscillator();
+    osc.start();
 
     startTime = millis();
 }
