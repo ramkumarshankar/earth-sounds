@@ -22,6 +22,8 @@ var susPercent = 0.2;
 var releaseTime = 0.5;
 var osc;
 
+var ambientSound;
+
 var notes = [60, 64, 67, 72];
 // var notes = [72, 77, 83, 87];
 
@@ -121,7 +123,11 @@ function preload() {
 
 function loadData(results) {
     var firstEventTime = moment(results.features[0].properties.time);
+    var startTime = 0;
     for (var i = 0; i < results.features.length; i++) {
+        var timeInterval = firstEventTime.diff(moment(results.features[i].properties.time), 'seconds') / 1000;
+        var eventdiff =  constrain(timeInterval, 1, 3);
+        startTime += eventdiff;
         let quakeEvent = new Earthquake(
             i,
             results.features[i].properties.place,
@@ -130,7 +136,8 @@ function loadData(results) {
             results.features[i].geometry.coordinates[1],
             results.features[i].geometry.coordinates[2],
             //Todo: decide how to sequence the events
-            firstEventTime.diff(moment(results.features[i].properties.time), 'seconds') / 1000
+            startTime
+            // firstEventTime.diff(moment(results.features[i].properties.time), 'seconds') / 1000
         );
         print(firstEventTime.diff(moment(results.features[i].properties.time), 'seconds'));
         print(results.features[i].properties.mag);
@@ -156,9 +163,6 @@ function setup() {
     textColor = color('rgba(255, 255, 255, 1)');
     background(backgroundColor);
 
-    ambientSound.loop();
-    ambientSound.play();
-
     env = new p5.Env();
     env.setADSR(attackTime, decayTime, susPercent, releaseTime);
     env.setRange(attackLevel, releaseLevel);
@@ -166,7 +170,12 @@ function setup() {
     osc = new p5.Oscillator();
     osc.start();
 
+    ambientSound.loop();
+    ambientSound.play();
+    ambientSound.setVolume(0.3);
+
     startTime = millis();
+
 }
 
 function draw() {
