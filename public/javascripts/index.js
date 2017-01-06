@@ -23,6 +23,7 @@ var releaseTime = 0.5;
 var osc;
 
 var notes = [60, 64, 67, 72];
+// var notes = [72, 77, 83, 87];
 
 class Earthquake {
     constructor(id, title, mag, long, lat, depth, time) {
@@ -78,7 +79,7 @@ class Earthquake {
 
                 fill(ellipseColor2);
                 ellipse(x, y, this._radius, this._radius);
-                this._radius += 1;
+                this._radius += 0.5;
 
                 fill(ellipseColor1);
                 ellipse(x, y, 15, 15);
@@ -95,6 +96,8 @@ class Earthquake {
 
 function preload() {
     regularFont = loadFont('./assets/Chivo-Light.otf');
+
+    ambientSound = loadSound('./assets/healing.mp3');
 
     if (useDummy) {
         //mockup some test data
@@ -129,6 +132,8 @@ function loadData(results) {
             //Todo: decide how to sequence the events
             firstEventTime.diff(moment(results.features[i].properties.time), 'seconds') / 1000
         );
+        print(firstEventTime.diff(moment(results.features[i].properties.time), 'seconds'));
+        print(results.features[i].properties.mag);
         earthquakes.push(quakeEvent);
         if (results.features[i].geometry.coordinates[2] > maxDepth) {
             maxDepth = results.features[i].geometry.coordinates[2];
@@ -150,6 +155,9 @@ function setup() {
     ellipseColor2 = color('rgba(255, 255, 255, 0.1)');
     textColor = color('rgba(255, 255, 255, 1)');
     background(backgroundColor);
+
+    ambientSound.loop();
+    ambientSound.play();
 
     env = new p5.Env();
     env.setADSR(attackTime, decayTime, susPercent, releaseTime);
