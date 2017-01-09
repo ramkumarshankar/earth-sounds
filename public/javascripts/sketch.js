@@ -26,6 +26,7 @@ var textColor;
 var startTime;
 var maxDepth = 0;
 var minDepth = 0;
+var boundaryDepth;
 var useDummy = false;
 var hasPlayed = false;
 
@@ -41,12 +42,10 @@ var osc;
 
 var ambientSound;
 
-var loNotes = [50, 56, 60, 64, 67];
-var hiNotes = [72, 77, 83, 87, 92];
-var notes = [50, 56, 60, 64, 67, 72, 77, 83, 87, 92];
+var notes = [56, 60, 64, 67, 72, 77, 81];
 var notesSize = notes.length;
 
-var prevNote = 5;
+var prevNote = 3;
 
 class Earthquake {
     constructor(id, title, mag, long, lat, depth, time) {
@@ -70,36 +69,57 @@ class Earthquake {
     }
 
     setupTone() {
-        //TODO: do something with frequency?
-        var direction = random();
-        var distance = random();
         var note = prevNote;
-        if (direction < 0.5) {
-            if (distance < 0.5) {
-                note -= 1;
-            }
-            else {
-                note -= 2;
-            }
+        if (this._depth < boundaryDepth) {
+            note++;
         }
         else {
-            if (distance < 0.5) {
-                note += 1;
+            note--;
+        }
+        if (note < 0) {
+            note = 0;
+        }
+        else if (note >= notesSize) {
+            note = notesSize - 1;
+        }
+        if (note == prevNote) {
+            note = this.selectNextNote();
+        }
+        boundaryDepth = this._depth;
+        this._freq = midiToFreq(notes[note]);
+        prevNote = note;
+
+    }
+
+    selectNextNote() {
+        var note = prevNote;
+        while (note==prevNote) {
+            var direction = random();
+            var distance = random();
+            if (direction < 0.5) {
+                if (distance < 0.5) {
+                    note -= 1;
+                }
+                else {
+                    note -= 2;
+                }
             }
             else {
-                note += 2;
+                if (distance < 0.5) {
+                    note += 1;
+                }
+                else {
+                    note += 2;
+                }
+            }
+            if (note < 0) {
+                note = 0;
+            }
+            else if (note >= notesSize) {
+                note = notesSize - 1;
             }
         }
-        prevNote = constrain(note, 0, notesSize-1);
-        this._freq = midiToFreq(notes[prevNote]);
-        // this._freq = midiToFreq(notes[Math.floor(random(notesSize))]);
-        // var boundary = (maxDepth + minDepth) / 2;
-        // if (this._depth >= boundary) {
-        //     this._freq = midiToFreq(loNotes[Math.floor(random(5))]);
-        // }
-        // else {
-        //     this._freq = midiToFreq(hiNotes[Math.floor(random(5))]);
-        // }
+        return note;
     }
 
     startDraw() {
@@ -170,7 +190,7 @@ class Earthquake {
 function preload() {
     regularFont = loadFont('./assets/Chivo-Light.otf');
 
-    ambientSound = loadSound('./assets/falling-through-space.mp3');
+    ambientSound = loadSound('./assets/thecosmos.webm');
 
     if (useDummy) {
         //mockup some test data
@@ -182,23 +202,18 @@ function preload() {
         earthquakes.push(quakeEvent);
     }
     else {
-        //load data feed, uncomment line
-        //Daily
+        //Daily data feed
         var url = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson";
-        // Hourly
-        // var url = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson";
         loadJSON(url, loadData);
     }
 
 }
 
 function loadData(results) {
-    var firstEventTime = moment(results.features[0].properties.time);
     var startTime = 0;
     for (var i = 0; i < results.features.length; i++) {
-        // var timeInterval = firstEventTime.diff(moment(results.features[i].properties.time), 'seconds') / 1000;
-        var timeInterval = random(0, 2);
-        var eventdiff =  constrain(timeInterval, 0.3, 1.5);
+        var timeInterval = random(4);
+        var eventdiff =  constrain(timeInterval, 0.4, 4);
         startTime += eventdiff;
         let quakeEvent = new Earthquake(
             i,
@@ -207,9 +222,7 @@ function loadData(results) {
             results.features[i].geometry.coordinates[0],
             results.features[i].geometry.coordinates[1],
             results.features[i].geometry.coordinates[2],
-            //Todo: decide how to sequence the events
             startTime
-            // firstEventTime.diff(moment(results.features[i].properties.time), 'seconds') / 1000
         );
         earthquakes.push(quakeEvent);
         if (results.features[i].geometry.coordinates[2] > maxDepth) {
@@ -218,6 +231,7 @@ function loadData(results) {
         if (results.features[i].geometry.coordinates[2] < minDepth) {
             minDepth = results.features[i].geometry.coordinates[2];
         }
+        boundaryDepth = (maxDepth + minDepth) / 2;
     }
     for (var i = 0; i <  earthquakes.length; i++) {
         earthquakes[i].setupTone();
@@ -284,4 +298,8 @@ function draw() {
         }
         startTime = millis();
     }
+}
+
+function windowResized() {
+    resizeCanvas(windowWidth, windowHeight);
 }
