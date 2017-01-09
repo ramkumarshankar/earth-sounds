@@ -142,8 +142,8 @@ class Earthquake {
                 this._hasPlayed = true;
             }
 
-            var x = map(this._long, -180, 180, 0, width);
-            var y = height - map(this._lat, -90, 90, 0, height);
+            var x = map(this._long, -180, 180, 50, width-50);
+            var y = height - map(this._lat, -90, 90, 50, height-50);
 
             if (this._fadeOut) {
                 if (this._colorAlpha < 0) {
