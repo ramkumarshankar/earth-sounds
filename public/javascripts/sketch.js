@@ -271,7 +271,7 @@ function setup() {
 
     ambientSound.loop();
     ambientSound.play();
-    ambientSound.setVolume(0.3);
+    ambientSound.setVolume(0.2);
 
     startTime = millis();
 
