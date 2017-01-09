@@ -1,1 +1,121 @@
-html{overflow:hidden}body{font:16px Chivo,"Helvetica Neue",Helvetica,Arial,sans-serif;color:#4A4A4A;text-align:center;margin:auto}h1,h4,h5{font-weight:normal}a{color:#00B7FF}.spinner{width:150px;height:150px;margin:100px auto;background-color:#777;border-radius:100%;-webkit-animation:sk-scaleout 1.5s infinite ease-in-out;animation:sk-scaleout 1.5s infinite ease-in-out}@-webkit-keyframes sk-scaleout{0%{-webkit-transform:scale(0)}100%{-webkit-transform:scale(1);opacity:0}}@keyframes sk-scaleout{0%{-webkit-transform:scale(0);transform:scale(0)}100%{-webkit-transform:scale(1);transform:scale(1);opacity:0}}div#overlay-button{opacity:1;position:absolute;top:30px;right:30px;width:58px;height:58px;background-image:url("../images/info-button.png");background-size:contain}div#overlay-button.hide{opacity:0;visibility:hidden;transition:opacity .5s}div#overlay-close-button{position:absolute;top:30px;right:30px;width:58px;height:58px;background-image:url("../images/close-button.png");background-size:contain;z-index:1500}div#overlay{opacity:0;position:fixed;height:100%;width:100%;top:0;left:0;background:rgba(255,255,255,0.8);visibility:hidden;transition:opacity .5s,visibility 0s .5s;perspective:1200px;text-align:left;overflow:auto}div#overlay.open{opacity:1;visibility:visible;transition:opacity .5s}div#overlay div#content{opacity:.4;transform:translateY(-25%) rotateX(35deg);transition:transform .5s,opacity .5s;width:60%;margin:auto;margin-top:15%}div#overlay div#content h1{color:#73626E;font-size:4em;margin-bottom:40px}div#overlay div#content h4{color:#73626E;font-size:1.4em;margin-bottom:20px}div#overlay div#content p{line-height:1.5em}div#overlay.open div#content{opacity:1;transform:rotateX(0deg)}div#overlay.close div#content{transform:translateY(25%) rotateX(-35deg)}.heart{color:#D0011B}
+html {
+  overflow: hidden;
+}
+body {
+  font: 16px Chivo, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #4A4A4A;
+  text-align: center;
+  margin: auto;
+}
+h1,
+h4,
+h5 {
+  font-weight: normal;
+}
+a {
+  color: #00B7FF;
+}
+.spinner {
+  width: 150px;
+  height: 150px;
+  margin: 100px auto;
+  background-color: #777;
+  border-radius: 100%;
+  -webkit-animation: sk-scaleout 1.5s infinite ease-in-out;
+  animation: sk-scaleout 1.5s infinite ease-in-out;
+}
+@-webkit-keyframes sk-scaleout {
+  0% {
+    -webkit-transform: scale(0);
+  }
+  100% {
+    -webkit-transform: scale(1);
+    opacity: 0;
+  }
+}
+@keyframes sk-scaleout {
+  0% {
+    -webkit-transform: scale(0);
+    transform: scale(0);
+  }
+  100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+div#overlay-button {
+  opacity: 1;
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  width: 58px;
+  height: 58px;
+  background-image: url("../images/info-button.png");
+  background-size: contain;
+}
+div#overlay-button.hide {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s;
+}
+div#overlay-close-button {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  width: 58px;
+  height: 58px;
+  background-image: url("../images/close-button.png");
+  background-size: contain;
+  z-index: 1500;
+}
+div#overlay {
+  opacity: 0;
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  background: rgba(255, 255, 255, 0.8);
+  visibility: hidden;
+  transition: opacity 0.5s, visibility 0s 0.5s;
+  perspective: 1200px;
+  text-align: left;
+  overflow: auto;
+}
+div#overlay.open {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.5s;
+}
+div#overlay div#content {
+  opacity: 0.4;
+  transform: translateY(-25%) rotateX(35deg);
+  transition: transform 0.5s, opacity 0.5s;
+  width: 60%;
+  margin: auto;
+  margin-top: 15%;
+}
+div#overlay div#content h1 {
+  color: #73626E;
+  font-size: 4em;
+  margin-bottom: 40px;
+}
+div#overlay div#content h4 {
+  color: #73626E;
+  font-size: 1.4em;
+  margin-bottom: 20px;
+}
+div#overlay div#content p {
+  line-height: 1.5em;
+}
+div#overlay.open div#content {
+  opacity: 1;
+  transform: rotateX(0deg);
+}
+div#overlay.close div#content {
+  transform: translateY(25%) rotateX(-35deg);
+}
+.heart {
+  color: #D0011B;
+}
