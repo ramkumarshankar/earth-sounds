@@ -2,26 +2,32 @@ var earthquakes = [];
 var regularFont;
 
 var backgroundColor;
+var screenColor = {
+    r: 65,
+    g: 62,
+    b: 74
+};
 
 var ellipseColor1;
 var pointColor = {
-    r: 11,
-    g: 34,
-    b: 62
+    r: 240,
+    g: 180,
+    b: 158
 };
 var ellipseColor2;
 var radiusColor = {
-    r: 255,
-    g: 255,
-    b: 255,
-    a: 26
+    r: 211,
+    g: 225,
+    b: 241,
+    a: 120
 };
 var textColor;
 
 var startTime;
 var maxDepth = 0;
 var minDepth = 0;
-var useDummy = true;
+var useDummy = false;
+var hasPlayed = false;
 
 //Envelope
 var env;
@@ -35,8 +41,12 @@ var osc;
 
 var ambientSound;
 
-var notes = [60, 64, 67, 72];
-// var notes = [72, 77, 83, 87];
+var loNotes = [50, 56, 60, 64, 67];
+var hiNotes = [72, 77, 83, 87, 92];
+var notes = [50, 56, 60, 64, 67, 72, 77, 83, 87, 92];
+var notesSize = notes.length;
+
+var prevNote = 5;
 
 class Earthquake {
     constructor(id, title, mag, long, lat, depth, time) {
@@ -61,7 +71,35 @@ class Earthquake {
 
     setupTone() {
         //TODO: do something with frequency?
-        this._freq = midiToFreq(notes[Math.floor(random(4))]);
+        var direction = random();
+        var distance = random();
+        var note = prevNote;
+        if (direction < 0.5) {
+            if (distance < 0.5) {
+                note -= 1;
+            }
+            else {
+                note -= 2;
+            }
+        }
+        else {
+            if (distance < 0.5) {
+                note += 1;
+            }
+            else {
+                note += 2;
+            }
+        }
+        prevNote = constrain(note, 0, notesSize-1);
+        this._freq = midiToFreq(notes[prevNote]);
+        // this._freq = midiToFreq(notes[Math.floor(random(notesSize))]);
+        // var boundary = (maxDepth + minDepth) / 2;
+        // if (this._depth >= boundary) {
+        //     this._freq = midiToFreq(loNotes[Math.floor(random(5))]);
+        // }
+        // else {
+        //     this._freq = midiToFreq(hiNotes[Math.floor(random(5))]);
+        // }
     }
 
     startDraw() {
@@ -132,7 +170,7 @@ class Earthquake {
 function preload() {
     regularFont = loadFont('./assets/Chivo-Light.otf');
 
-    ambientSound = loadSound('./assets/healing.mp3');
+    ambientSound = loadSound('./assets/falling-through-space.mp3');
 
     if (useDummy) {
         //mockup some test data
@@ -158,8 +196,9 @@ function loadData(results) {
     var firstEventTime = moment(results.features[0].properties.time);
     var startTime = 0;
     for (var i = 0; i < results.features.length; i++) {
-        var timeInterval = firstEventTime.diff(moment(results.features[i].properties.time), 'seconds') / 1000;
-        var eventdiff =  constrain(timeInterval, 0.3, 2);
+        // var timeInterval = firstEventTime.diff(moment(results.features[i].properties.time), 'seconds') / 1000;
+        var timeInterval = random(0, 2);
+        var eventdiff =  constrain(timeInterval, 0.3, 1.5);
         startTime += eventdiff;
         let quakeEvent = new Earthquake(
             i,
@@ -183,12 +222,27 @@ function loadData(results) {
     for (var i = 0; i <  earthquakes.length; i++) {
         earthquakes[i].setupTone();
     }
-
 }
+
+function checkPlayed() {
+    hasPlayed = false;
+    for (var i = 0; i < earthquakes.length; i++) {
+        if (earthquakes[i]._hasDrawn) {
+            hasPlayed = true;
+            continue;
+        }
+        print(i);
+        hasPlayed = false;
+        break;
+    }
+    return hasPlayed;
+}
+
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
-    backgroundColor =  color(97, 74, 226);
+    smooth();
+    backgroundColor =  color(screenColor.r, screenColor.g, screenColor.b);
     ellipseColor1 = color(pointColor.r, pointColor.g, pointColor.b);
     ellipseColor2 = color(radiusColor.r, radiusColor.g, radiusColor.g, radiusColor.a);
     textColor = color('rgba(255, 255, 255, 1)');
@@ -221,5 +275,13 @@ function draw() {
     }
     for (var i = 0; i < earthquakes.length; i++) {
         earthquakes[i].draw();
+    }
+    if (checkPlayed()) {
+        for (var i = 0; i < earthquakes.length; i++) {
+            earthquakes[i]._hasDrawn = false;
+            earthquakes[i]._hasPlayed = false;
+            earthquakes[i].setupTone();
+        }
+        startTime = millis();
     }
 }
