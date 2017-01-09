@@ -245,7 +245,6 @@ function checkPlayed() {
             hasPlayed = true;
             continue;
         }
-        print(i);
         hasPlayed = false;
         break;
     }
