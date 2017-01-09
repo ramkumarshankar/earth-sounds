@@ -1,15 +1,19 @@
+@headingColor: #73626E;
+@bodyColor: #4A4A4A;
+@heartColor: #D0011B;
+
 html {
   overflow:hidden;
 }
 
 body {
   font: 16px Chivo, "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: #0B224A;
+  color: @bodyColor;
   text-align: center;
   margin:auto;
 }
 
-h1 {
+h1, h4, h5 {
   font-weight: normal;
 }
 
@@ -48,12 +52,19 @@ a {
 }
 
 div#overlay-button {
+  opacity: 1;
   position: absolute;
   top: 30px;
   right: 30px;
   width: 58px;
   height: 58px;
   background-image: url("../images/info-button.png");
+}
+
+div#overlay-button.hide {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s;
 }
 
 div#overlay-close-button {
@@ -73,11 +84,12 @@ div#overlay {
   width: 100%;
   top: 0;
   left: 0;
-  background: rgba(255,255,255,0.9);
+  background: rgba(255,255,255,0.8);
   visibility: hidden;
   transition: opacity 0.5s, visibility 0s 0.5s;
   perspective: 1200px;
   text-align: left;
+  overflow: auto;
 }
 
 div#overlay.open {
@@ -95,11 +107,19 @@ div#overlay div#content {
   margin-top: 15%;
 
   h1 {
+    color: @headingColor;
     font-size: 4em;
+    margin-bottom: 40px;
   }
 
   h4 {
+    color: @headingColor;
     font-size: 1.4em;
+    margin-bottom: 20px;
+  }
+
+  p {
+    line-height: 1.5em;
   }
 }
 
@@ -113,5 +133,5 @@ div#overlay.close div#content {
 }
 
 .heart {
-  color: #D0011B;
+  color: @heartColor;
 }
