@@ -190,7 +190,7 @@ class Earthquake {
 function preload() {
     regularFont = loadFont('./assets/Chivo-Light.otf');
 
-    ambientSound = loadSound('./assets/thecosmos.webm');
+    ambientSound = loadSound('./assets/thecosmos.mp3');
 
     if (useDummy) {
         //mockup some test data
