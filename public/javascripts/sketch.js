@@ -203,7 +203,7 @@ function preload() {
     }
     else {
         //Daily data feed
-        var url = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson";
+        var url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson";
         loadJSON(url, loadData);
     }
 
