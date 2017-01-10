@@ -94,7 +94,7 @@ div#overlay div#content {
   transition: transform 0.5s, opacity 0.5s;
   width: 60%;
   margin: auto;
-  margin-top: 15%;
+  margin-top: 10%;
 }
 div#overlay div#content h1 {
   color: #73626E;
